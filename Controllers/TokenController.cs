@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
-using Microsoft.Rest;
 using System.Text;
+using Microsoft.Rest;
 
 namespace allegro_pbi_token_api.Controllers
 {
@@ -15,8 +15,8 @@ namespace allegro_pbi_token_api.Controllers
     public class TokenController : ControllerBase
     {
         // GET api/values
-        [HttpPost]
-        public async Task<ActionResult<TokenCredentials>> PostAsync()
+        [HttpGet]
+        public async Task<ActionResult<string>> GetAsync()
         {
           using (HttpClient client = new HttpClient())
           {
@@ -42,9 +42,7 @@ namespace allegro_pbi_token_api.Controllers
 
             JObject parsedTokenData = JObject.Parse(tokenData);
 
-            var token = parsedTokenData["access_token"].Value<string>();
-            TokenCredentials tokenCredentials = new TokenCredentials(token, "Bearer");
-            return tokenCredentials;
+            return parsedTokenData["access_token"].Value<string>();
           }
         }
     }

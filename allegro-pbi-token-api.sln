@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "allegro-pbi-token-api", "allegro-pbi-token-api.csproj", "{AE3C7887-1CC5-4EE6-9D12-11EC11AB98FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE3C7887-1CC5-4EE6-9D12-11EC11AB98FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE3C7887-1CC5-4EE6-9D12-11EC11AB98FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE3C7887-1CC5-4EE6-9D12-11EC11AB98FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE3C7887-1CC5-4EE6-9D12-11EC11AB98FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {496FE6EC-E36D-4BB8-ADFA-6583C2A227B9}
+	EndGlobalSection
+EndGlobal

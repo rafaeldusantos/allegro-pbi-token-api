@@ -1,16 +1,19 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build-env
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.1-stretch-slim AS base
 WORKDIR /app
+EXPOSE 80
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
-RUN dotnet restore
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1-stretch AS build
+WORKDIR /src
+COPY ["allegro-pbi-token-api.csproj", ""]
+RUN dotnet restore "./allegro-pbi-token-api.csproj"
+COPY . .
+WORKDIR "/src/."
+RUN dotnet build "allegro-pbi-token-api.csproj" -c Release -o /app
 
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
+FROM build AS publish
+RUN dotnet publish "allegro-pbi-token-api.csproj" -c Release -o /app
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+FROM base AS final
 WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "allegro_pbi_token_api.dll"]
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "allegro-pbi-token-api.dll"]
