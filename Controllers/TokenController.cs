@@ -6,44 +6,60 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.Text;
-using Microsoft.Rest;
+using allegro_pbi_token_api.ViewModel;
 
 namespace allegro_pbi_token_api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("v1/[controller]")]
     [ApiController]
     public class TokenController : ControllerBase
     {
-        // GET api/values
-        [HttpGet]
-        public async Task<ActionResult<string>> GetAsync()
+        private readonly IClientRepository _clientRepository;
+        public TokenController(IClientRepository clientRepository)
         {
-          using (HttpClient client = new HttpClient())
+            _clientRepository = clientRepository;
+        }
+
+        // Get v1/token/generate
+        [HttpGet("Generate/{id}")]
+        public async Task<ActionResult> GetGenerateAsync(string id)
+        {
+          Client client = await _clientRepository.GetClient(id);
+           if (client == null)
+            return new NotFoundResult();
+          using (HttpClient httpClient = new HttpClient())
           {
             string tokenEndpoint = "https://login.microsoftonline.com/common/oauth2/token";
             string accept = "application/json";
-            string userName = "allegro@segmentopesquisas.com.br";
-            string password = "Q2w12ssw!!";
-            string clientId = "837c3d7f-b43f-4e51-a351-e9a3c8e2d64a";
 
-            client.DefaultRequestHeaders.Add("Accept", accept);
+             httpClient.DefaultRequestHeaders.Add("Accept", accept);
             string postBody = null;
 
             postBody = $@"resource=https%3A%2F%2Fanalysis.windows.net/powerbi/api
-                            &client_id={clientId}
+                            &client_id={client.Pbi.ClientId}
                             &grant_type=password
-                            &username={userName}
-                            &password={password}
+                            &username={client.Pbi.UserName}
+                            &password={Base64Decode(client.Pbi.Password)}
                             &scope=openid";
-
-            var tokenResult = await client.PostAsync(tokenEndpoint, new StringContent(postBody, Encoding.UTF8, "application/x-www-form-urlencoded"));
+            Reports report = client.Pbi.Reports;
+            var tokenResult = await httpClient.PostAsync(tokenEndpoint, new StringContent(postBody, Encoding.UTF8, "application/x-www-form-urlencoded"));
             tokenResult.EnsureSuccessStatusCode();
             var tokenData = await tokenResult.Content.ReadAsStringAsync();
 
             JObject parsedTokenData = JObject.Parse(tokenData);
+            GenerateTokenRes generateTokenRes = new GenerateTokenRes(){
+              AccessToken = parsedTokenData["access_token"].Value<string>(),
+              GroupId = report.GroupId,
+              ReportId = report.ReportId
+            };
 
-            return parsedTokenData["access_token"].Value<string>();
+            return  new ObjectResult(generateTokenRes);
           }
         }
+
+        private static string Base64Decode(string base64EncodedData) {
+          var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+          return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+        } 
     }
 }

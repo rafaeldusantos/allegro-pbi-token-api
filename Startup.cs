@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using allegro_pbi_token_api.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,16 @@ namespace allegro_pbi_token_api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.Configure<Settings>(options =>
+            {
+                options.ConnectionString 
+                    = Configuration.GetSection("MongoConnection:ConnectionString").Value;
+                options.Database 
+                    = Configuration.GetSection("MongoConnection:Database").Value;
+            });
+            services.AddTransient<IClientContext, ClientContext>();
+            services.AddTransient<IClientRepository, ClientRepository>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
