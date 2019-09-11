@@ -18,7 +18,7 @@ public class ClientRepository : IClientRepository
     }
     public Task<Client> GetClient(string clientId)
     {
-        FilterDefinition<Client> filter = Builders<Client>.Filter.Eq(m => m.ClientId, clientId);
+        FilterDefinition<Client> filter = Builders<Client>.Filter.Eq(m => m.clientId, clientId);
         return _context
                 .Client
                 .Find(filter)
@@ -35,14 +35,14 @@ public class ClientRepository : IClientRepository
             await _context
                     .Client
                     .ReplaceOneAsync(
-                        filter: g => g.Id == client.Id,
+                        filter: g => g.id == client.id,
                         replacement: client);
         return updateResult.IsAcknowledged
                 && updateResult.ModifiedCount > 0;
     }
-    public async Task<bool> Delete(string name)
+    public async Task<bool> Delete(string clientId)
     {
-        FilterDefinition<Client> filter = Builders<Client>.Filter.Eq(m => m.Name, name);
+        FilterDefinition<Client> filter = Builders<Client>.Filter.Eq(m => m.clientId, clientId);
         DeleteResult deleteResult = await _context
                                             .Client
                                             .DeleteOneAsync(filter);

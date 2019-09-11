@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.Text;
 using allegro_pbi_token_api.ViewModel;
+using Microsoft.AspNetCore.Cors;
 
 namespace allegro_pbi_token_api.Controllers
 {
+    [EnableCors("AllowAll")]
     [Route("v1/[controller]")]
     [ApiController]
     public class TokenController : ControllerBase
@@ -25,8 +27,8 @@ namespace allegro_pbi_token_api.Controllers
         public async Task<ActionResult> GetGenerateAsync(string id)
         {
           Client client = await _clientRepository.GetClient(id);
-           if (client == null)
-            return new NotFoundResult();
+          if (client == null)
+            return NotFound(new ApiResponse(404, "Client not found"));
           using (HttpClient httpClient = new HttpClient())
           {
             string tokenEndpoint = "https://login.microsoftonline.com/common/oauth2/token";
@@ -36,12 +38,12 @@ namespace allegro_pbi_token_api.Controllers
             string postBody = null;
 
             postBody = $@"resource=https%3A%2F%2Fanalysis.windows.net/powerbi/api
-                            &client_id={client.Pbi.ClientId}
+                            &client_id={client.pbi.clientId}
                             &grant_type=password
-                            &username={client.Pbi.UserName}
-                            &password={Base64Decode(client.Pbi.Password)}
+                            &username={client.pbi.userName}
+                            &password={Base64Decode(client.pbi.password)}
                             &scope=openid";
-            Reports report = client.Pbi.Reports;
+            Reports report = client.pbi.reports;
             var tokenResult = await httpClient.PostAsync(tokenEndpoint, new StringContent(postBody, Encoding.UTF8, "application/x-www-form-urlencoded"));
             tokenResult.EnsureSuccessStatusCode();
             var tokenData = await tokenResult.Content.ReadAsStringAsync();
@@ -49,8 +51,8 @@ namespace allegro_pbi_token_api.Controllers
             JObject parsedTokenData = JObject.Parse(tokenData);
             GenerateTokenRes generateTokenRes = new GenerateTokenRes(){
               AccessToken = parsedTokenData["access_token"].Value<string>(),
-              GroupId = report.GroupId,
-              ReportId = report.ReportId
+              GroupId = report.groupId,
+              ReportId = report.reportId
             };
 
             return  new ObjectResult(generateTokenRes);
@@ -60,6 +62,7 @@ namespace allegro_pbi_token_api.Controllers
         private static string Base64Decode(string base64EncodedData) {
           var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
           return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
-        } 
+        }
+
     }
 }
