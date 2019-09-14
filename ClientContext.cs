@@ -10,5 +10,5 @@ public class ClientContext : IClientContext
         var client = new MongoClient(options.Value.ConnectionString);
         _db = client.GetDatabase(options.Value.Database);
     }
-    public IMongoCollection<Client> Client => _db.GetCollection<Client>("Client");
+    public IMongoCollection<Client> Client => _db.GetCollection<Client>("client");
 }
