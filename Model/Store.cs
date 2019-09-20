@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-public class Client
+public class Store
 {
     [BsonId]
     public ObjectId id { get; set; }
     public string name { get; set; }
-    public string clientId { get; set; }
+    public string storeId { get; set; }
     [BsonElement("updatedAt")]
     public DateTime updatedAt { get; set; }
     [BsonElement("createdAt")]

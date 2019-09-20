@@ -40,8 +40,8 @@ namespace allegro_pbi_token_api
                 options.Database 
                     = Configuration.GetSection("MongoConnection:Database").Value;
             });
-            services.AddTransient<IClientContext, ClientContext>();
-            services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<IStoreContext, StoreContext>();
+            services.AddTransient<IStoreRepository, StoreRepository>();
 
         }
 
