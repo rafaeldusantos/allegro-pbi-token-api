@@ -54,6 +54,7 @@ namespace allegro_pbi_token_api
             } else {
                 app.UseHsts();
             }
+            app.UseHttpsRedirection();
             app.UseCors("AllowAll");
             app.UseMvc();
             
