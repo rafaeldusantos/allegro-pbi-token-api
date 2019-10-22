@@ -16,19 +16,19 @@ namespace allegro_pbi_token_api.Controllers
     [ApiController]
     public class TokenController : ControllerBase
     {
-        private readonly IStoreRepository _storeRepository;
-        public TokenController(IStoreRepository storeRepository)
+        private readonly IOrganizationRepository _organizationRepository;
+        public TokenController(IOrganizationRepository organizationRepository)
         {
-            _storeRepository = storeRepository;
+            _organizationRepository = organizationRepository;
         }
 
         // Get v1/token/generate
         [HttpGet("Generate/{id}")]
         public async Task<ActionResult> GetGenerateAsync(string id)
         {
-          Store store = await _storeRepository.GetStore(id);
-          if (store == null)
-            return NotFound(new ApiResponse(404, "Store not found"));
+          Organization organization = await _organizationRepository.GetOrganization(id);
+          if (organization == null)
+            return NotFound(new ApiResponse(404, "Organization not found"));
           using (HttpClient httpClient = new HttpClient())
           {
             string tokenEndpoint = "https://login.microsoftonline.com/common/oauth2/token";
@@ -38,12 +38,12 @@ namespace allegro_pbi_token_api.Controllers
             string postBody = null;
 
             postBody = $@"resource=https%3A%2F%2Fanalysis.windows.net/powerbi/api
-                            &client_id={store.pbi.clientId}
+                            &client_id={organization.pbi.clientId}
                             &grant_type=password
-                            &username={store.pbi.userName}
-                            &password={Base64Decode(store.pbi.password)}
+                            &username={organization.pbi.userName}
+                            &password={Base64Decode(organization.pbi.password)}
                             &scope=openid";
-            Reports report = store.pbi.reports;
+            Reports report = organization.pbi.reports;
             var tokenResult = await httpClient.PostAsync(tokenEndpoint, new StringContent(postBody, Encoding.UTF8, "application/x-www-form-urlencoded"));
             tokenResult.EnsureSuccessStatusCode();
             var tokenData = await tokenResult.Content.ReadAsStringAsync();

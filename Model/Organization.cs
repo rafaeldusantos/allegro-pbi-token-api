@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-public class Store
+[BsonIgnoreExtraElements]
+public class Organization
 {
     [BsonId]
     public ObjectId id { get; set; }
     public string name { get; set; }
-    public string storeId { get; set; }
+    public string organizationId { get; set; }
     [BsonElement("updatedAt")]
     public DateTime updatedAt { get; set; }
     [BsonElement("createdAt")]
