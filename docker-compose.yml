@@ -12,9 +12,10 @@ services:
     env_file: .env
     labels:  
       - traefik.backend=allegro-pbi-token-api
-      - traefik.frontend.rule=Host:api.centricx.com.br
+      - traefik.frontend.rule=Host:api.centricx.com.br;PathPrefixStrip:/pbi
       - traefik.docker.network=web
       - traefik.port=5000
+      
     networks:
       - internal
       - web
