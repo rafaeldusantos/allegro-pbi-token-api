@@ -1,0 +1,21 @@
+version: '3.4'
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+
+services:
+  allegro-pbi-token-api:
+    build: .
+    env_file: .env.dev
+    labels:  
+      - traefik.backend=allegro-pbi-token-api
+      - traefik.frontend.rule=Host:api-dev.centricx.com.br;PathPrefixStrip:/pbi
+      - traefik.docker.network=web
+      - traefik.port=5000
+      
+    networks:
+      - internal
+      - web
